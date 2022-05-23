@@ -124,7 +124,7 @@
  *        type: string
  *      responses:
  *          200:
- *              description: Serie created
+ *              description: Serie delete
  */
 
 
@@ -138,10 +138,10 @@
  *      parameters:
  *      - name : "id"
  *        in: "path"
- *        description: "Id para retornar una serie"
+ *        description: "Id para actualizar una serie"
  *        required: true
  *        type: string
  *      responses:
  *          200:
- *              description: Serie created
+ *              description: Serie update
  */
