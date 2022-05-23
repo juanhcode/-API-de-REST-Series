@@ -2,14 +2,13 @@ import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { collections } from "../services/database.service";
 import { createValidator } from 'express-joi-validation';
+import {decodeToken} from '../firebase/manage.token'
 
 //Schemas
 import serieSchema from '../schemas/serie.schema'
 
 //Validator schema Joi
-const validator = createValidator({
-    passError:true
-});
+const validator = createValidator();
 
 
 export const seriesRouter = express.Router();
@@ -17,22 +16,20 @@ export const seriesRouter = express.Router();
 //Middlewares
 seriesRouter.use(express.json());
 
-seriesRouter.get("/", async (_req: Request, res: Response) => {
+
+seriesRouter.get("/",decodeToken, async (_req: Request, res: Response) => {
     try {
         const serie = await collections.series.find({}).toArray();
-
         res.status(200).send(serie);
     } catch (error) {
         res.status(500).send(error.message);
     }
 });
 
-// Example route: http://localhost:8080/games/610aaf458025d42e7ca9fcd0
-seriesRouter.get("/:id", async (req: Request, res: Response) => {
-    const id = req?.params?.id;
 
+seriesRouter.get("/:id",decodeToken, async (req: Request, res: Response) => {
+    const id = req?.params?.id;
     try {
-        // _id in MongoDB is an objectID type so we need to find our specific document by querying
         const query = { _id: new ObjectId(id) };
         const serie = await collections.series.findOne(query);
 
@@ -43,47 +40,10 @@ seriesRouter.get("/:id", async (req: Request, res: Response) => {
         res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
     }
 });
-
-/**
- * @swagger
- * components:
- *  schemas:
- *      games:
- *          type:object
- *          properties:
- *                 name:
- *                     type:string
- *                     description: Nombre de la serie
-                   description:
-                       type:string
- *                     description: Nombre de la descripcion
-                   year:
-                       type:number
- *                     description: Año de publicada la serie
-                   gender:
-                       type:string
- *                     description: Genero de la serie
- * 
- * 
- * /series/
- *  post:
- *      sumary:Crear o agregar un juego.
- *      tags:[games]
- *      responses:
- *          200:
- *              description: Se creo correctalmente la serie
- *      requestBody:
- *          required: true
- *          content:
- *              application/json:
- *                 schema:
- *                   type: object
- *                   $ref: '#/components/schemas/Vehiculo'
- */
-seriesRouter.post("/",validator.body(serieSchema), async (req: Request, res: Response) => {
+seriesRouter.post("/",validator.body(serieSchema),decodeToken, async (req: Request, res: Response) => {
     try {
         const newSerie = req.body;
-        console.log(newSerie);
+        console.log("Hola");
         const result = await collections.series.insertOne(newSerie);
         result
             ? res.status(201).send(`Successfully created a new serie with id ${result.insertedId}`)
@@ -94,7 +54,7 @@ seriesRouter.post("/",validator.body(serieSchema), async (req: Request, res: Res
     }
 });
 
-seriesRouter.put("/:id", async (req: Request, res: Response) => {
+seriesRouter.put("/:id",validator.body(serieSchema),decodeToken, async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
@@ -112,9 +72,8 @@ seriesRouter.put("/:id", async (req: Request, res: Response) => {
     }
 });
 
-seriesRouter.delete("/:id", async (req: Request, res: Response) => {
+seriesRouter.delete("/:id",decodeToken, async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
         const query = { _id: new ObjectId(id) };
         const result = await collections.series.deleteOne(query);
