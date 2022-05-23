@@ -34,7 +34,7 @@
  * @swagger
  * /series:
  *  post:
- *      summary: Creates a new Serie
+ *      summary: Crear series
  *      tags: [Serie]
  *      requestBody:
  *          required: true
@@ -55,7 +55,29 @@
  * @swagger
  * /series:
  *  get:
- *      summary: Creates a new Serie
+ *      summary: Obtener series
+ *      tags: [Serie]
+ *      responses:
+ *          200:
+ *              description: Serie created
+ *              schema:
+ *                type: "object"
+ *                
+ *          500:
+ *              description: Internal Server Error
+ * 
+ *          401:
+ *              description: Unauthorized
+ */
+
+//GET ID
+
+/**
+ * 
+ * @swagger
+ * /series/{id}:
+ *  get:
+ *      summary: Obtener series mediante id
  *      tags: [Serie]
  *      requestBody:
  *          required: true
@@ -64,19 +86,28 @@
  *                  schema:
  *                      type: object
  *                      $ref: '#/components/schemas/Serie'
+ *      parameters:
+ *      - name : "id"
+ *        in: "path"
+ *        description: "Id para retornar una serie"
+ *        required: true
+ *        type: string  
  *          
  *      responses:
- *          200:
- *              description: Serie created
+ *          400:
+ *              description: Id invalido
+ *          404:
+ *              description: Id no encontrado
  */
+
 
 
 /**
  * 
  * @swagger
- * /series:
+ * /series/{id}:
  *  delete:
- *      summary: Creates a new Serie
+ *      summary: Delete a serie
  *      tags: [Serie]
  *      requestBody:
  *          required: true
@@ -85,7 +116,12 @@
  *                  schema:
  *                      type: object
  *                      $ref: '#/components/schemas/Serie'
- *          
+ *      parameters:
+ *      - name : "id"
+ *        in: "path"
+ *        description: "Id para eliminar una serie"
+ *        required: true
+ *        type: string
  *      responses:
  *          200:
  *              description: Serie created
@@ -95,18 +131,16 @@
 /**
  * 
  * @swagger
- * /series:
+ * /series/{id}:
  *  put:
- *      summary: Creates a new Serie
+ *      summary: Update a serie
  *      tags: [Serie]
- *      requestBody:
- *          required: true
- *          content:
- *              application/json:
- *                  schema:
- *                      type: object
- *                      $ref: '#/components/schemas/Serie'
- *          
+ *      parameters:
+ *      - name : "id"
+ *        in: "path"
+ *        description: "Id para retornar una serie"
+ *        required: true
+ *        type: string
  *      responses:
  *          200:
  *              description: Serie created
