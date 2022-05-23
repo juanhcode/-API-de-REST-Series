@@ -1,4 +1,7 @@
 import {initializeApp} from 'firebase/app'
+import admin from 'firebase-admin';
+import serviceAccount from './serviceAccount.json'
+import  {ServiceAccount} from 'firebase-admin';
 import * as dotenv from 'dotenv'
 dotenv.config();
 const firebaseConfig = {
@@ -11,4 +14,8 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export default {app};
+
+admin.initializeApp({
+    credential:admin.credential.cert(serviceAccount as ServiceAccount)
+})
+export default {app,admin};
